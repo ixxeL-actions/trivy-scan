@@ -19,7 +19,7 @@ jobs:
     - name: Run trivy for CVE scan
       uses: ixxeL-actions/trivy-scan@main
       with:
-        scan-type: 'fs'
+        scan-type: 'config'
         image-ref: 'ixxel/multi-tools-alpine:latest'
         scan-ref: '/usr/local/bin'
 
