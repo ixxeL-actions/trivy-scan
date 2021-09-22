@@ -45,6 +45,10 @@ inputs:
     description: 'writes results to a file with the specified file name'
     required: false
     default: ''
+  skip-dirs:
+    description: 'comma separated list of directories where traversal is skipped'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -68,7 +72,7 @@ runs:
         echo -e "${YELLOW}[ EXECUTING ] > Updating Trivy DB.${BLANK}"
         trivy image --download-db-only
         echo -e "${YELLOW}[ EXECUTING ] > Executing ${{ inputs.image-ref }} vuln scan.${BLANK}"
-        echo -e "${CYAN}[ INFO ] > Scan mode : ${{ inputs.scan-type }} on artifact : ${ARTIFACT_REF}.${BLANK}"
+        echo -e "${CYAN}[ INFO ] > Scan mode : ${{ inputs.scan-type }}, on artifact(s) : ${ARTIFACT_REF}.${BLANK}"
 
         if [ ! ${{ inputs.scan-type }} = "config" ]
         then
@@ -77,6 +81,7 @@ runs:
                                         --security-checks ${{ inputs.security-checks }} \
                                         --severity ${{ inputs.severity }} \
                                         --format ${{ inputs.format }} \
+                                        --template ${{ inputs.template }} \
                                         ${ARTIFACT_REF}
         else
           trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
