@@ -4,7 +4,8 @@ author: 'ixxeL'
 inputs:
   image-ref:
     description: 'image reference(for backward compatibility)'
-    required: true
+    required: false
+    default: alpine
   scan-ref:
     description: 'Scan reference'
     required: false
@@ -72,10 +73,9 @@ runs:
           ARGS="$ARGS --output ${{ inputs.output }}"
         fi
         if [ "${{ inputs.skip-dirs }}" ];then
-          for i in $(echo ${{ inputs.skip-dirs }} | tr ",")
-          do
-            ARGS="$ARGS --skip-dirs $i"
-          done
+          str=${{ inputs.skip-dirs }}
+          final=${str//,/ --skip-dirs }
+          ARGS="$ARGS --skip-dirs $str"
         fi
         echo ::set-output name=ARGS::${ARGS}
       shell: bash  
