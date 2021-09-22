@@ -21,6 +21,6 @@ jobs:
       with:
         scan-type: 'fs'
         image-ref: 'ixxel/multi-tools-alpine:latest'
-        scan-ref: '/'
+        scan-ref: '/usr/local/bin'
 
       

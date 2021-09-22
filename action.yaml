@@ -68,6 +68,7 @@ runs:
         echo -e "${YELLOW}[ EXECUTING ] > Updating Trivy DB.${BLANK}"
         trivy image --download-db-only
         echo -e "${YELLOW}[ EXECUTING ] > Executing ${{ inputs.image-ref }} vuln scan.${BLANK}"
+        echo -e "${CYAN}[ INFO ] > Scan mode : ${{ inputs.scan-type }} on artifact : ${ARTIFACT_REF}.${BLANK}"
 
         trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
                                       --vuln-type ${{ inputs.vuln-type }} \
