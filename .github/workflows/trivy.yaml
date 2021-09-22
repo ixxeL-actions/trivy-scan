@@ -17,7 +17,7 @@ jobs:
       image: ixxel/multi-tools-alpine:latest
     steps:
     - name: Run trivy for CVE scan
-      uses: ixxeL2097/action-trivy@main
+      uses: ixxeL-actions/trivy-scan@main
       with:
         scan-type: 'image'
         image-ref: 'ixxel/multi-tools-alpine:latest'
