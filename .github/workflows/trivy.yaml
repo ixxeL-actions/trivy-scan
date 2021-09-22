@@ -1,4 +1,4 @@
-name: unit-tests-img-CI
+name: trivy-scan-CI
 on:
   push:
     branches:
@@ -19,6 +19,8 @@ jobs:
     - name: Run trivy for CVE scan
       uses: ixxeL-actions/trivy-scan@main
       with:
-        scan-type: 'image'
+        scan-type: 'fs'
         image-ref: 'ixxel/multi-tools-alpine:latest'
+        scan-ref: '/'
+
       
