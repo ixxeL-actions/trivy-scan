@@ -75,7 +75,7 @@ runs:
         if [ "${{ inputs.skip-dirs }}" ];then
           str=${{ inputs.skip-dirs }}
           final=${str//,/ --skip-dirs }
-          ARGS="$ARGS --skip-dirs $str"
+          ARGS="$ARGS --skip-dirs $final"
         fi
         echo ::set-output name=ARGS::${ARGS}
       shell: bash  
