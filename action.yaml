@@ -81,7 +81,6 @@ runs:
                                         --security-checks ${{ inputs.security-checks }} \
                                         --severity ${{ inputs.severity }} \
                                         --format ${{ inputs.format }} \
-                                        --template ${{ inputs.template }} \
                                         ${ARTIFACT_REF}
         else
           trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
