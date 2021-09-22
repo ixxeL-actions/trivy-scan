@@ -22,5 +22,6 @@ jobs:
         scan-type: 'image'
         image-ref: 'ixxel/multi-tools-alpine:latest'
         security-checks: 'vuln,config'
+        output: 'result'
 
       
