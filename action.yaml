@@ -5,6 +5,10 @@ inputs:
   image-ref:
     description: 'image reference(for backward compatibility)'
     required: true
+  scan-ref:
+    description: 'Scan reference'
+    required: false
+    default: '.'
   scan-type:
     description: 'Scan type to use for scanning vulnerability'
     required: false
@@ -45,6 +49,17 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - id: prepare-scan
+      run: |
+        export ARTIFACT_REF=${{ inputs.image-ref }}
+        if [ "${{ inputs.scan-type }}" = "fs" ] ||  [ "${{ inputs.scan-type }}" = "config" ];then
+          ARTIFACT_REF=${{ inputs.scan-ref }}
+        fi
+        if [ "${{ inputs.input }}" ]; then
+          ARTIFACT_REF="--input ${{ inputs.input }}"
+        fi
+        echo ::set-output name=ARTIFACT_REF::${ARTIFACT_REF}
+      shell: bash  
     - id: trivy-scan
       run: |
         echo -e "${BLUE}[ STEP - VULNERABILITIES CHECK ] > Scanning ${{ inputs.image-ref }} for vulnerabilities.${BLANK}"
@@ -59,10 +74,11 @@ runs:
                                       --security-checks ${{ inputs.security-checks }} \
                                       --severity ${{ inputs.severity }} \
                                       --format ${{ inputs.format }} \
-                                      ${{ inputs.image-ref }}
+                                      ${ARTIFACT_REF}
 
       shell: bash
       env:
+        ARTIFACT_REF: ${{ steps.prepare-scan.outputs.ARTIFACT_REF }}
         RED: \033[1;31m
         GREEN: \033[1;32m
         YELLOW: \033[1;33m
