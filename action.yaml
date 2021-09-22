@@ -70,13 +70,20 @@ runs:
         echo -e "${YELLOW}[ EXECUTING ] > Executing ${{ inputs.image-ref }} vuln scan.${BLANK}"
         echo -e "${CYAN}[ INFO ] > Scan mode : ${{ inputs.scan-type }} on artifact : ${ARTIFACT_REF}.${BLANK}"
 
-        trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
-                                      --vuln-type ${{ inputs.vuln-type }} \
-                                      --security-checks ${{ inputs.security-checks }} \
-                                      --severity ${{ inputs.severity }} \
-                                      --format ${{ inputs.format }} \
-                                      ${ARTIFACT_REF}
-
+        if [ ! ${ARTIFACT_REF} = "config" ]
+        then
+          trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
+                                        --vuln-type ${{ inputs.vuln-type }} \
+                                        --security-checks ${{ inputs.security-checks }} \
+                                        --severity ${{ inputs.severity }} \
+                                        --format ${{ inputs.format }} \
+                                        ${ARTIFACT_REF}
+        else
+          trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
+                                        --severity ${{ inputs.severity }} \
+                                        --format ${{ inputs.format }} \
+                                        ${ARTIFACT_REF}
+        fi        
       shell: bash
       env:
         ARTIFACT_REF: ${{ steps.prepare-scan.outputs.ARTIFACT_REF }}
