@@ -1,0 +1,72 @@
+name: 'CVE scan trivy'
+description: 'Scans container images for vulnerabilities with Trivy'
+author: 'ixxeL'
+inputs:
+  image-ref:
+    description: 'image reference(for backward compatibility)'
+    required: true
+  scan-type:
+    description: 'Scan type to use for scanning vulnerability'
+    required: false
+    default: 'image'
+  input:
+    description: 'reference of tar file to scan'
+    required: false
+    default: ''
+  exit-code:
+    description: 'exit code when vulnerabilities were found'
+    required: false
+    default: '0'
+  vuln-type:
+    description: 'comma-separated list of vulnerability types (os,library)'
+    required: false
+    default: 'os,library'
+  security-checks:
+    description: 'comma-separated list of what security issues to detect (vuln,config)'
+    required: false
+    default: 'vuln'
+  severity:
+    description: 'severities of vulnerabilities to be displayed'
+    required: false
+    default: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+  format:
+    description: 'output format (table, json, template)'
+    required: false
+    default: 'table'
+  template:
+    description: 'use an existing template for rendering output (@/contrib/sarif.tpl, @/contrib/gitlab.tpl, @/contrib/junit.tpl'
+    required: false
+    default: ''
+  output:
+    description: 'writes results to a file with the specified file name'
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - id: trivy-scan
+      run: |
+        echo -e "${BLUE}[ STEP - VULNERABILITIES CHECK ] > Scanning ${{ inputs.image-ref }} for vulnerabilities.${BLANK}"
+        echo -e "${CYAN}[ INFO ] > Trivy version.${BLANK}"
+        trivy --version | head -n 1
+        echo -e "${YELLOW}[ EXECUTING ] > Updating Trivy DB.${BLANK}"
+        trivy image --download-db-only
+        echo -e "${YELLOW}[ EXECUTING ] > Executing ${{ inputs.image-ref }} vuln scan.${BLANK}"
+
+        trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
+                                      --vuln-type ${{ inputs.vuln-type }} \
+                                      --security-checks ${{ inputs.security-checks }} \
+                                      --severity ${{ inputs.severity }} \
+                                      --format ${{ inputs.format }} \
+                                      ${{ inputs.image-ref }}
+
+      shell: bash
+      env:
+        RED: \033[1;31m
+        GREEN: \033[1;32m
+        YELLOW: \033[1;33m
+        BLUE: \033[1;34m
+        PURPLE: \033[1;35m
+        CYAN: \033[1;36m
+        BLANK: \033[0m
