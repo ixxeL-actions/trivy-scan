@@ -16,11 +16,11 @@ jobs:
     container: 
       image: ixxel/multi-tools-alpine:latest
     steps:
-    - name: Run trivy for CVE scan
+    - name: Trivy image scan
       uses: ixxeL-actions/trivy-scan@main
       with:
         scan-type: 'image'
         image-ref: 'ixxel/multi-tools-alpine:latest'
-        scan-ref: '/usr/local/bin'
+        security-checks: 'vuln,config'
 
       

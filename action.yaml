@@ -63,6 +63,21 @@ runs:
           ARTIFACT_REF="--input ${{ inputs.input }}"
         fi
         echo ::set-output name=ARTIFACT_REF::${ARTIFACT_REF}
+
+        ARGS=""
+        if [ "${{ inputs.template }}" ]; then
+          ARGS="$ARGS --template ${{ inputs.template }}"
+        fi
+        if [ "${{ inputs.output }}" ];then
+          ARGS="$ARGS --output ${{ inputs.output }}"
+        fi
+        if [ "${{ inputs.skip-dirs }}" ];then
+          for i in $(echo ${{ inputs.skip-dirs }} | tr ",")
+          do
+            ARGS="$ARGS --skip-dirs $i"
+          done
+        fi
+        echo ::set-output name=ARGS::${ARGS}
       shell: bash  
     - id: trivy-scan
       run: |
@@ -81,16 +96,19 @@ runs:
                                         --security-checks ${{ inputs.security-checks }} \
                                         --severity ${{ inputs.severity }} \
                                         --format ${{ inputs.format }} \
+                                        ${ARGS} \
                                         ${ARTIFACT_REF}
         else
           trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
                                         --severity ${{ inputs.severity }} \
                                         --format ${{ inputs.format }} \
+                                        ${ARGS} \
                                         ${ARTIFACT_REF}
         fi        
       shell: bash
       env:
         ARTIFACT_REF: ${{ steps.prepare-scan.outputs.ARTIFACT_REF }}
+        ARGS: ${{ steps.prepare-scan.outputs.ARGS }}
         RED: \033[1;31m
         GREEN: \033[1;32m
         YELLOW: \033[1;33m
