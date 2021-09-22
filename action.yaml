@@ -70,7 +70,7 @@ runs:
         echo -e "${YELLOW}[ EXECUTING ] > Executing ${{ inputs.image-ref }} vuln scan.${BLANK}"
         echo -e "${CYAN}[ INFO ] > Scan mode : ${{ inputs.scan-type }} on artifact : ${ARTIFACT_REF}.${BLANK}"
 
-        if [ ! ${ARTIFACT_REF} = "config" ]
+        if [ ! ${{ inputs.scan-type }} = "config" ]
         then
           trivy ${{ inputs.scan-type }} --exit-code ${{ inputs.exit-code }} \
                                         --vuln-type ${{ inputs.vuln-type }} \
